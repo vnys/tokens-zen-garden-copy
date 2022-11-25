@@ -1,4 +1,9 @@
-.default--dark {
+/**
+ * Do not edit directly
+ * Generated on Fri, 25 Nov 2022 12:04:37 GMT
+ */
+
+:root {
   --color-black: #131313;
   --color-white: #ffffff;
   --color-transparent: rgba(255,255,255,0);
