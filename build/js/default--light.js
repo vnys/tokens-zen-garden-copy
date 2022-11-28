@@ -1,6 +1,6 @@
 /**
  * Do not edit directly
- * Generated on Mon, 28 Nov 2022 10:33:07 GMT
+ * Generated on Mon, 28 Nov 2022 12:04:03 GMT
  */
 
 export const ColorBlack = "#131313";

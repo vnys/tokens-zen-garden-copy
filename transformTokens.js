@@ -1,14 +1,14 @@
-const StyleDictionary = require('style-dictionary');
-const { Parser } = require('expr-eval');
-const { parseToRgba } = require('color2k');
-const calcAstParser = require('postcss-calc-ast-parser');
-const path = require('path');
-const glob = require('glob');
-const util = require('util');
+const StyleDictionary = require('style-dictionary')
+const { Parser } = require('expr-eval')
+const { parseToRgba } = require('color2k')
+const calcAstParser = require('postcss-calc-ast-parser')
+const path = require('path')
+const glob = require('glob')
+const util = require('util')
 
-const fs = require('fs');
+const fs = require('fs')
 
-const asyncGlob = util.promisify(glob);
+const asyncGlob = util.promisify(glob)
 
 const fontWeightMap = {
   thin: 100,
@@ -47,39 +47,41 @@ const fontWeightMap = {
   heavy: 900,
   super: 900,
   extrafett: 900,
-};
+}
 
-const parser = new Parser();
+const parser = new Parser()
 
 function checkAndEvaluateMath(expr) {
-  let calcParsed;
+  let calcParsed
   try {
-    calcParsed = calcAstParser.parse(expr);
+    calcParsed = calcAstParser.parse(expr)
   } catch (ex) {
-    return expr;
+    return expr
   }
 
-  const calcReduced = calcAstParser.reduceExpression(calcParsed);
+  const calcReduced = calcAstParser.reduceExpression(calcParsed)
 
-  let unitlessExpr = expr;
-  let unit = '';
+  let unitlessExpr = expr
+  let unit = ''
 
   if (calcReduced && calcReduced.type !== 'Number') {
-    unitlessExpr = expr.replace(new RegExp(calcReduced.unit, 'ig'), '');
-    unit = calcReduced.unit;
+    unitlessExpr = expr.replace(new RegExp(calcReduced.unit, 'ig'), '')
+    unit = calcReduced.unit
   }
 
-  let evaluated;
+  let evaluated
 
   try {
-    evaluated = parser.evaluate(unitlessExpr);
+    evaluated = parser.evaluate(unitlessExpr)
   } catch (ex) {
-    return expr;
+    return expr
   }
   try {
-    return unit ? `${evaluated}${unit}` : Number.parseFloat(evaluated.toFixed(3));
+    return unit
+      ? `${evaluated}${unit}`
+      : Number.parseFloat(evaluated.toFixed(3))
   } catch {
-    return expr;
+    return expr
   }
 }
 
@@ -88,9 +90,9 @@ function checkAndEvaluateMath(expr) {
  */
 function transformDimension(value) {
   if (value.endsWith('px')) {
-    return value;
+    return value
   }
-  return value + 'px';
+  return value + 'px'
 }
 
 /**
@@ -98,19 +100,19 @@ function transformDimension(value) {
  */
 function transformLetterSpacing(value) {
   if (value.endsWith('%')) {
-    const percentValue = value.slice(0, -1);
-    return `${percentValue / 100}em`;
+    const percentValue = value.slice(0, -1)
+    return `${percentValue / 100}em`
   }
-  return value;
+  return value
 }
 
 /**
  * Helper: Transforms letter spacing % to em
  */
 function transformFontWeights(value) {
-  const mapped = fontWeightMap[value.toLowerCase()];
+  const mapped = fontWeightMap[value.toLowerCase()]
   // return `${mapped}`;
-  return mapped ? `${mapped}` : value;
+  return mapped ? `${mapped}` : value
 }
 
 /**
@@ -118,11 +120,11 @@ function transformFontWeights(value) {
  */
 function transformHEXRGBa(value) {
   if (value.startsWith('rgba(#')) {
-    const [hex, alpha] = value.replace(')', '').split('rgba(').pop().split(', ');
-    const [r, g, b] = parseToRgba(hex);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    const [hex, alpha] = value.replace(')', '').split('rgba(').pop().split(', ')
+    const [r, g, b] = parseToRgba(hex)
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`
   } else {
-    return value;
+    return value
   }
 }
 
@@ -133,11 +135,11 @@ function transformHEXRGBa(value) {
 function transformShadow(shadow) {
   if (typeof shadow === 'string') {
     if (shadow.startsWith('{') && shadow.endsWith('}')) {
-      return `var(--${shadow.slice(1, -1).split('.').join('-')})`;
+      return `var(--${shadow.slice(1, -1).split('.').join('-')})`
     }
   }
-  const { x, y, blur, spread, color } = shadow;
-  return `${x}px ${y}px ${blur}px ${spread}px ${color}`;
+  const { x, y, blur, spread, color } = shadow
+  return `${x}px ${y}px ${blur}px ${spread}px ${color}`
 }
 
 /**
@@ -148,13 +150,20 @@ function transformShadow(shadow) {
 function transformTypography(value) {
   if (typeof value === 'string') {
     if (value.startsWith('{') && value.endsWith('}')) {
-      return `var(--${value.slice(1, -1).split('.').join('-')})`;
+      return `var(--${value.slice(1, -1).split('.').join('-')})`
     }
   }
 
-  const { fontWeight = '', fontSize = '', lineHeight = '', fontFamily = '' } = value;
+  const {
+    fontWeight = '',
+    fontSize = '',
+    lineHeight = '',
+    fontFamily = '',
+  } = value
 
-  return `${fontWeight} ${fontSize}px${lineHeight ? `/${lineHeight}` : ''} ${fontFamily}`;
+  return `${fontWeight} ${fontSize}px${
+    lineHeight ? `/${lineHeight}` : ''
+  } ${fontFamily}`
 }
 
 /**
@@ -166,9 +175,9 @@ StyleDictionary.registerTransform({
   transitive: true,
   matcher: (token) => token.type === 'typography',
   transformer: (token) => {
-    return transformTypography(token.original.value);
+    return transformTypography(token.original.value)
   },
-});
+})
 
 /**
  *  css url property cannot interpolate variables so the url definition must be in the token itself
@@ -180,7 +189,7 @@ StyleDictionary.registerTransform({
   matcher: (token) => token.type === 'asset',
   // Putting this in strings seems to be required
   transformer: (token) => `url(${token.value})`,
-});
+})
 
 /**
  *  for font awesome to work we need the following format for the content property : \unicode
@@ -192,7 +201,7 @@ StyleDictionary.registerTransform({
   matcher: (token) => token.type === 'icon',
   // Putting this in strings seems to be required
   transformer: (token) => `"\\${token.value}"`,
-});
+})
 
 /**
  * Transform shadow shorthands for css variables
@@ -205,9 +214,9 @@ StyleDictionary.registerTransform({
   transformer: (token) => {
     return Array.isArray(token.original.value)
       ? token.original.value.map((single) => transformShadow(single)).join(', ')
-      : transformShadow(token.original.value);
+      : transformShadow(token.original.value)
   },
-});
+})
 
 /**
  * Transform fontSizes to px
@@ -216,9 +225,12 @@ StyleDictionary.registerTransform({
   name: 'size/px',
   type: 'value',
   transitive: true,
-  matcher: (token) => ['dimension', 'borderRadius', 'borderWidth', 'spacing', 'sizing'].includes(token.type),
+  matcher: (token) =>
+    ['dimension', 'borderRadius', 'borderWidth', 'spacing', 'sizing'].includes(
+      token.type,
+    ),
   transformer: (token) => transformDimension(token.value),
-});
+})
 
 /**
  * Transform letterSpacing to em
@@ -229,7 +241,7 @@ StyleDictionary.registerTransform({
   transitive: true,
   matcher: (token) => token.type === 'letterSpacing',
   transformer: (token) => transformLetterSpacing(token.value),
-});
+})
 
 /**
  * Transform fontWeights to numerical
@@ -240,7 +252,7 @@ StyleDictionary.registerTransform({
   transitive: true,
   matcher: (token) => token.type === 'fontWeights',
   transformer: (token) => transformFontWeights(token.value),
-});
+})
 
 /**
  * Transform rgba colors to usable rgba
@@ -249,9 +261,10 @@ StyleDictionary.registerTransform({
   name: 'color/hexrgba',
   type: 'value',
   transitive: true,
-  matcher: (token) => typeof token.value === 'string' && token.value.startsWith('rgba(#'),
+  matcher: (token) =>
+    typeof token.value === 'string' && token.value.startsWith('rgba(#'),
   transformer: (token) => transformHEXRGBa(token.value),
-});
+})
 
 /**
  * Transform to resolve math across all tokens
@@ -263,11 +276,11 @@ StyleDictionary.registerTransform({
   matcher: (token) => token,
   // Putting this in strings seems to be required
   transformer: (token) => `${checkAndEvaluateMath(token.value)}`,
-});
+})
 
 function convertToSafeThemeName(themeName) {
-  const safeName = themeName.replace(' ', '-').replace(/[^0-9a-zA-Z-]/g, '');
-  return safeName;
+  const safeName = themeName.replace(' ', '-').replace(/[^0-9a-zA-Z-]/g, '')
+  return safeName
 }
 
 function getStyleDictionaryConfig(themeName, themeTokenSets) {
@@ -307,35 +320,41 @@ function getStyleDictionaryConfig(themeName, themeTokenSets) {
         ],
       },
     },
-  };
+  }
 }
 
 async function transformTokens() {
-  console.log('Build started...');
-  console.log('\n==============================================');
-  const themesPath = await asyncGlob('**/$themes.json', { fs, mark: true });
-  const metadataPath = await asyncGlob('**/$metadata.json', { fs, mark: true });
+  console.log('Build started...')
+  console.log('\n==============================================')
+  const themesPath = await asyncGlob('**/tokensEdited/$themes.json', {
+    fs,
+    mark: true,
+  })
+  const metadataPath = await asyncGlob('**/tokensEdited/$metadata.json', {
+    fs,
+    mark: true,
+  })
 
   if (themesPath[0] && metadataPath[0]) {
-    const rootFolders = themesPath[0].split('/').slice(0, -1).join('/');
+    const rootFolders = themesPath[0].split('/').slice(0, -1).join('/')
 
-    const themeFiles = JSON.parse(fs.readFileSync(themesPath[0], 'utf-8'));
-    const orderMetadata = JSON.parse(fs.readFileSync(metadataPath[0], 'utf-8'));
+    const themeFiles = JSON.parse(fs.readFileSync(themesPath[0], 'utf-8'))
+    const orderMetadata = JSON.parse(fs.readFileSync(metadataPath[0], 'utf-8'))
 
     for (const theme of themeFiles) {
-      const { name: themeName, selectedTokenSets } = theme;
+      const { name: themeName, selectedTokenSets } = theme
       const themeTokenSets = orderMetadata.tokenSetOrder
         .filter((tokenSet) => selectedTokenSets[tokenSet] !== 'disabled')
-        .map((set) => `${rootFolders}/${set}.json`);
+        .map((set) => `${rootFolders}/${set}.json`)
 
-      const themeConfig = getStyleDictionaryConfig(themeName, themeTokenSets);
-      const SD = StyleDictionary.extend(themeConfig);
-      SD.buildAllPlatforms();
+      const themeConfig = getStyleDictionaryConfig(themeName, themeTokenSets)
+      const SD = StyleDictionary.extend(themeConfig)
+      SD.buildAllPlatforms()
     }
   }
 }
 
 transformTokens().finally(() => {
-  console.log('\n==============================================');
-  console.log('\nBuild completed!');
-});
+  console.log('\n==============================================')
+  console.log('\nBuild completed!')
+})
