@@ -13,9 +13,11 @@
     "style-dictionary": "^3.7.1"
   },
   "scripts": {
-    "build": "node transformTokens"
+    "build": "node transformTokens",
+    "serve": "http-server -p 9999"
   },
   "devDependencies": {
-    "browser-style-dictionary": "^3.1.1-browser.1"
+    "browser-style-dictionary": "^3.1.1-browser.1",
+    "http-server": "^14.1.1"
   }
 }
