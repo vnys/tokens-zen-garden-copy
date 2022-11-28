@@ -1,0 +1,77 @@
+{
+  "section": {
+    "footer": {
+      "container": {
+        "value": {
+          "fill": "{section.footer.container-background}",
+          "horizontalPadding": "{section.footer.padding-x}",
+          "verticalPadding": "{section.footer.padding-y}"
+        },
+        "type": "composition"
+      },
+      "container-overlay": {
+        "value": "{color.transparent}",
+        "type": "color",
+        "description": "The section container has a separate background and overlay. You could use the overlay to add a gradient or opacity layer on top of your background color or image fill."
+      },
+      "container-background": {
+        "value": "{semantic.color.accent.emphasis}",
+        "type": "color",
+        "description": "Every section container can have a unique background color or image. On top of the background a gradient or opactive layer can be applied. Use the container-overlay token to achieve this."
+      },
+      "container-bg-image": {
+        "value": "null",
+        "type": "asset",
+        "description": "Add an image address pointing to a public url"
+      },
+      "color": {
+        "divider": {
+          "value": "{semantic.color.accent.default}",
+          "type": "color"
+        },
+        "body": {
+          "value": "{semantic.color.fg.on-accent}",
+          "type": "color"
+        },
+        "logo": {
+          "value": "{semantic.color.fg.on-accent}",
+          "type": "color"
+        }
+      },
+      "padding-x": {
+        "value": "165",
+        "type": "spacing"
+      },
+      "padding-y": {
+        "value": "64",
+        "type": "spacing"
+      },
+      "gap": {
+        "value": "{semantic.gap-modifier.y}*18",
+        "type": "spacing"
+      },
+      "logo": {
+        "text-color": {
+          "value": "{semantic.color.bg.surface}",
+          "type": "color"
+        },
+        "text-size": {
+          "value": "22",
+          "type": "fontSizes"
+        },
+        "icon-color": {
+          "value": "{semantic.color.bg.surface}",
+          "type": "color"
+        },
+        "icon-size": {
+          "value": "38",
+          "type": "sizing"
+        },
+        "gap": {
+          "value": "8",
+          "type": "spacing"
+        }
+      }
+    }
+  }
+}

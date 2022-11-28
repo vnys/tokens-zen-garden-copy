@@ -1,0 +1,90 @@
+{
+  "section": {
+    "pricing": {
+      "container": {
+        "value": {
+          "fill": "{section.pricing.container-background}",
+          "verticalPadding": "{section.pricing.padding-y}",
+          "horizontalPadding": "{section.pricing.padding-x}"
+        },
+        "type": "composition"
+      },
+      "container-overlay": {
+        "value": "{color.transparent}",
+        "type": "color",
+        "description": "The section container has a separate background and overlay. You could use the overlay to add a gradient or opacity layer on top of your background color or image fill."
+      },
+      "container-background": {
+        "value": "{semantic.color.bg.surface}",
+        "type": "color",
+        "description": "Every section container can have a unique background color or image. On top of the background a gradient or opactive layer can be applied. Use the container-overlay token to achieve this."
+      },
+      "container-bg-image": {
+        "value": "null",
+        "type": "asset",
+        "description": "Add an image address pointing to a public url"
+      },
+      "color": {
+        "kicker": {
+          "value": "{semantic.color.fg.subtle}",
+          "type": "color"
+        },
+        "headline": {
+          "value": "{semantic.color.fg.default}",
+          "type": "color"
+        },
+        "body": {
+          "value": "{semantic.color.fg.subtle}",
+          "type": "color"
+        },
+        "label": {
+          "value": "{semantic.color.fg.default}",
+          "type": "color"
+        },
+        "icon": {
+          "value": "{semantic.color.accent.default}",
+          "type": "color"
+        }
+      },
+      "padding-x": {
+        "value": "165",
+        "type": "spacing"
+      },
+      "padding-y": {
+        "value": "211",
+        "type": "spacing"
+      },
+      "gap": {
+        "value": "{semantic.gap-modifier.y}*56",
+        "type": "spacing"
+      },
+      "heading-block-gap": {
+        "value": "{semantic.gap-modifier.y}*16",
+        "type": "spacing"
+      },
+      "heading-gap": {
+        "value": "{semantic.gap-modifier.y}*8",
+        "type": "spacing"
+      },
+      "block-gap": {
+        "value": "{semantic.gap-modifier.x}*40",
+        "type": "spacing"
+      },
+      "icon-1": {
+        "value": "f06b",
+        "type": "icon",
+        "description": "gift"
+      },
+      "icon-2": {
+        "value": "f06b",
+        "type": "icon",
+        "description": "gift"
+      },
+      "bullet": {
+        "value": "f058",
+        "type": "icon",
+        "description": "check-circle"
+      }
+    }
+  }
+}

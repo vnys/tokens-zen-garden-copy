@@ -1,0 +1,10 @@
+{
+  "pattern": {
+    "menu-bar": {
+      "gap": {
+        "value": "{semantic.gap-modifier.x}*24",
+        "type": "spacing"
+      }
+    }
+  }
+}
