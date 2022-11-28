@@ -947,7 +947,7 @@
           "type": "color"
         },
         "default": {
-          "value": "{color.brand color.dribbble}",
+          "value": "{color.emerald.500}",
           "type": "color"
         },
         "subtle": {
